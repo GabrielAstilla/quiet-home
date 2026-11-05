@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug builds only: lets tests start the screensaver directly with `adb shell am start`. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:ignore="UnusedAttribute">
+        <activity
+            android:name=".ScreensaverActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".UpdatesActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+    </application>
+</manifest>

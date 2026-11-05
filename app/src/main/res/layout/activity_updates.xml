@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Settings › About › Updates -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false">
+
+    <com.zguy.tvlauncher.BackdropView
+        android:id="@+id/backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.zguy.tvlauncher.GlassView
+        android:id="@+id/panel"
+        android:layout_width="760dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="36dp"
+        android:layout_marginBottom="36dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingStart="34dp"
+        android:paddingTop="26dp"
+        android:paddingEnd="34dp"
+        android:paddingBottom="26dp">
+
+        <!-- Scrolls when release notes make the panel taller than the screen; focus keeps rows in view. -->
+        <ScrollView
+            android:id="@+id/panel_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="text-medium"
+                android:letterSpacing="0.1"
+                android:text="@string/about"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tag="display-semibold"
+                android:text="@string/updates"
+                android:textColor="@color/text_primary"
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/installed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="16sp" />
+
+            <!-- Status line + progress -->
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:tag="text-medium"
+                android:textColor="@color/text_primary"
+                android:textSize="19sp" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_marginTop="10dp"
+                android:max="1000"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/progress_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <!-- Release notes (focusable so Up/Down can scroll long notes) -->
+            <TextView
+                android:id="@+id/notes_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:tag="text-semibold"
+                android:text="@string/release_notes"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <ScrollView
+                android:id="@+id/notes_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="112dp"
+                android:layout_marginTop="6dp"
+                android:fadingEdgeLength="18dp"
+                android:focusable="true"
+                android:overScrollMode="never"
+                android:padding="10dp"
+                android:requiresFadingEdge="vertical"
+                android:scrollbars="none"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="3dp"
+                    android:textColor="#E6FFFFFF"
+                    android:textSize="16sp" />
+            </ScrollView>
+
+            <LinearLayout
+                android:id="@+id/buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
+
+                <TextView
+                    android:id="@+id/btn_check"
+                    style="@style/UpdateButton"
+                    android:text="@string/check_updates" />
+
+                <TextView
+                    android:id="@+id/btn_download"
+                    style="@style/UpdateButton"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/download_update" />
+
+                <TextView
+                    android:id="@+id/btn_install"
+                    style="@style/UpdateButton"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/install_update" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btn_auto"
+                style="@style/UpdateButton"
+                android:layout_width="match_parent"
+                android:layout_marginTop="14dp"
+                android:gravity="start|center_vertical" />
+
+            <TextView
+                android:id="@+id/source"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+        </LinearLayout>
+        </ScrollView>
+    </com.zguy.tvlauncher.GlassView>
+</FrameLayout>

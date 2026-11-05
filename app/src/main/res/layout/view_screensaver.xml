@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:clipChildren="false">
+
+    <com.zguy.tvlauncher.BackdropView
+        android:id="@+id/ss_backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="64dp"
+        android:layout_marginBottom="56dp"
+        android:orientation="vertical">
+
+        <TextClock
+            android:id="@+id/ss_clock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="display-semibold"
+            android:textColor="@color/text_primary"
+            android:textSize="88sp" />
+
+        <TextView
+            android:id="@+id/ss_greeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:tag="text-medium"
+            android:textColor="#D9FFFFFF"
+            android:textSize="26sp" />
+    </LinearLayout>
+</FrameLayout>

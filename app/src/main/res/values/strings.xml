@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Quiet Home</string>
+    <string name="settings">Settings</string>
+    <string name="tab_home">HOME</string>
+    <string name="tab_apps">ALL APPS</string>
+    <string name="tab_settings">SETTINGS</string>
+    <string name="settings_hint">↑ ↓ choose  ·  ← → change  ·  OK select  ·  BACK close</string>
+    <string name="preview_label">PREVIEW  ·  NOTHING IS SAVED UNTIL YOU CHOOSE SAVE</string>
+    <string name="preview_title">App name</string>
+    <string name="preview_desc">How titles and cards will look over this background.</string>
+    <string name="open_all_apps">OPEN ALL APPS</string>
+    <string name="empty_steps">In All Apps, hold OK on an app and choose “Add to Home”. Your pinned apps appear here, in the order you choose.</string>
+    <string name="gallery_hint">OK to preview before applying · BACK to close</string>
+    <string name="about">ABOUT</string>
+    <string name="updates">Updates</string>
+    <string name="release_notes">RELEASE NOTES</string>
+    <string name="check_updates">Check for Updates</string>
+    <string name="download_update">Download Update</string>
+    <string name="cancel_download">Cancel Download</string>
+    <string name="retry_download">Retry Download</string>
+    <string name="install_update">Install Update</string>
+</resources>

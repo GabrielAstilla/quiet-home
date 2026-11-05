@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Launcher" parent="@android:style/Theme.Material.NoActionBar">
+        <!-- Solid dark window: no white flash on cold start, no system wallpaper compositing. -->
+        <item name="android:windowBackground">@color/bg_default</item>
+        <item name="android:windowShowWallpaper">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:colorAccent">@color/accent_default</item>
+        <item name="android:colorBackground">@color/bg_default</item>
+        <item name="android:navigationBarColor">@color/bg_default</item>
+        <item name="android:statusBarColor">@color/bg_default</item>
+    </style>
+
+    <!-- Settings panel and image picker: drawn over the current screen, which stays visible. -->
+    <style name="Theme.Launcher.Overlay">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="Theme.Launcher.Screensaver">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <style name="UpdateButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:paddingStart">22dp</item>
+        <item name="android:paddingEnd">22dp</item>
+        <item name="android:textColor">#E6FFFFFF</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:tag">text-medium</item>
+    </style>
+
+    <style name="Tab">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingBottom">9dp</item>
+        <item name="android:textColor">#99FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:tag">text-medium</item>
+    </style>
+</resources>
