@@ -25,7 +25,7 @@ No ads, no recommendations, no content feeds, no account, no network access.
 Settings › About › **Updates** shows the installed version, then *Check for Updates*, *Download Update* (with progress
 and Cancel/Retry) and *Install Update* (Android's own installer asks you to confirm). An optional daily check is off by
 default and only notifies. Updates come from the stable releases of the public repository
-[GabrielAstilla/quiet-home](https://github.com/GabrielAstilla/quiet-home); no release is published yet. See
+[GabrielAstilla/quiet-home](https://github.com/GabrielAstilla/quiet-home). See
 [RELEASING.md](RELEASING.md) for the release layout, signing, publishing, and registering a Downloader code that keeps
 working for future versions.
 

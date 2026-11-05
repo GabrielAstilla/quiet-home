@@ -1,9 +1,7 @@
 # Releasing Quiet Home, in-app updates and Downloader install
 
 > **Status:** source code is on GitHub at <https://github.com/GabrielAstilla/quiet-home> (public).
-> **No release has been published yet**, so the in-app updater finds nothing and the stable download link below
-> returns 404 until the first release exists. No Downloader code has been registered: `NNNNNN` below is a
-> **placeholder**.
+> First stable release: **v1.1.0**. No Downloader code has been registered yet: `NNNNNN` below is a **placeholder**.
 
 ## 1. How it fits together
 
@@ -48,23 +46,20 @@ Tag releases `v<versionName>` (e.g. `v1.2.0`). The tag is only a label: the upda
 Android installs an update **only if it is signed with the same key** as the installed app. Quiet Home checks
 this before offering to install, and explains the problem if the keys don't match.
 
-- **Now:** release builds are signed with this Mac's debug key `~/.android/debug.keystore`. **Back that file up.**
-  If it is lost, or you build on another computer, future APKs can't update existing installs, and the TV would
-  need an uninstall and reinstall, losing pins and settings.
-- **Recommended before your first public release:** a dedicated release key, kept outside the project:
+- **In use since v1.1.0:** a dedicated release key, kept outside the project and never committed:
+  - key file `~/.android/quiethome-release.jks` (alias `quiethome`, RSA 4096, valid until 2054)
+  - passwords in `~/.gradle/gradle.properties` (`quietHome.keystore`, `quietHome.keystorePassword`,
+    `quietHome.keyAlias`, `quietHome.keyPassword`)
+  - certificate SHA-256 `ca8ce5b3dc07f58771f55d3dcd025802bfb3a1f831abdc3e0e235a06888f63a9`
+
+  **Back up the .jks file and its password together.** Without them no future update can be installed over
+  existing installs. If the properties are missing, the build falls back to the debug key, which can't update
+  installs made from GitHub releases. Always check before publishing:
   ```sh
-  keytool -genkeypair -keystore ~/.android/quiethome-release.jks -alias quiethome \
-          -keyalg RSA -keysize 4096 -validity 10000
+  apksigner verify --print-certs app/build/release/QuietHome.apk | grep SHA-256   # must show ca8ce5b3…63a9
   ```
-  ```properties
-  # ~/.gradle/gradle.properties  (never commit this file or the .jks)
-  quietHome.keystore=/Users/<you>/.android/quiethome-release.jks
-  quietHome.keystorePassword=…
-  quietHome.keyAlias=quiethome
-  quietHome.keyPassword=…
-  ```
-  Switching keys changes the signature, so a TV running a debug-key build must uninstall once before installing a
-  release-key build. Do the switch before people install it.
+- Builds signed with a different key (for example the earlier debug-key builds) can't be updated in place:
+  uninstall them once, then install the release.
 
 ## 5. Build the release assets (local)
 
