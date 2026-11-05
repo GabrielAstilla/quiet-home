@@ -90,8 +90,8 @@ Fonts, in order of preference:
 
 To add fonts you are licensed to use:
 ```sh
-adb push SF-Pro-Display-Semibold.otf /sdcard/Android/data/com.zguy.tvlauncher/files/fonts/
-adb push HelveticaNeue-Medium.ttf   /sdcard/Android/data/com.zguy.tvlauncher/files/fonts/
+adb push SF-Pro-Display-Semibold.otf /sdcard/Android/data/io.github.gabrielastilla.quiethome/files/fonts/
+adb push HelveticaNeue-Medium.ttf   /sdcard/Android/data/io.github.gabrielastilla.quiethome/files/fonts/
 ```
 Then go to Settings › Appearance › Typography › Font › **Import fonts from folder**. Files are checked before use, so a broken
 file is skipped instead of crashing. They are copied into private storage, so deleting the folder afterwards is fine.
@@ -133,10 +133,10 @@ Settings › Appearance › Wallpaper:
 - **Type**: Solid colour, Gradient (top/bottom colour, direction), Wallpaper image, or Video wallpaper.
 - Per-app backgrounds, the *Change with selected app* toggle, the look settings and **Restore default wallpaper settings** are unchanged.
 
-Importing from the remote: copy files to `/sdcard/Android/data/com.zguy.tvlauncher/files/wallpapers/`
+Importing from the remote: copy files to `/sdcard/Android/data/io.github.gabrielastilla.quiethome/files/wallpapers/`
 (images: jpg/png/webp; videos: mp4/m4v/mov/mkv/webm/ts). They appear in the gallery automatically.
 If a file was copied with restrictive permissions and shows as unreadable, run
-`adb shell chmod 644 /sdcard/Android/data/com.zguy.tvlauncher/files/wallpapers/<file>`.
+`adb shell chmod 644 /sdcard/Android/data/io.github.gabrielastilla.quiethome/files/wallpapers/<file>`.
 
 ## Video wallpapers & screensaver
 
@@ -162,7 +162,7 @@ add themselves to that list. So Quiet Home's screensaver is a **launcher-only id
 Quiet Home also includes an optional system screensaver ("Dream") which some firmware lets you select over ADB:
 ```sh
 adb shell settings get secure screensaver_components          # note the current value first
-adb shell settings put secure screensaver_components com.zguy.tvlauncher/.QuietDream
+adb shell settings put secure screensaver_components io.github.gabrielastilla.quiethome/.QuietDream
 adb shell settings put secure screensaver_enabled 1
 # undo: put back the value you noted, e.g.
 adb shell settings put secure screensaver_components <previous value>
@@ -241,10 +241,32 @@ and also disables window transitions. *Animation speed* scales every duration an
 - Glass surfaces draw one small pre-blurred bitmap each. Nothing animates while idle, and springs settle and stop.
 - No services, jobs or polling. The network callback is registered only while a screen is visible.
 
+## Profiling (v1.2.0)
+
+Measured on the Google TV emulator (Android 14, 1080p @ 60 Hz) with `dumpsys gfxinfo`, StrictMode (debug builds) and a
+debug-only redraw probe (`RedrawProbe.kt`). The same scripted remote input ran on the v1.1.0 code and on v1.2.0, both
+with the same four pinned apps. The emulator renders on the Mac's GPU, so absolute timings don't predict the TV;
+the counts of wasted work do.
+
+| Cause found | Evidence | Fix |
+|---|---|---|
+| Springs never settled after a restyle: a new `SpringForce` set on a running spring has no rest threshold | **184 frames per 3 s while idle** (v1.1.0); probe: pill + tab labels redrawn every frame with springs "running" at their targets | Reuse each spring's force and only change stiffness/damping → **0 idle frames** |
+| Font folder listed on disk on every text-styling call | StrictMode: 52 main-thread disk reads (30–40 ms each on first run) | Fonts load once on a background thread at startup |
+| Per-card-focus `File.exists()` / `mkdirs()` / `getFilesDir()` for per-app backgrounds and settings rows | StrictMode stacks in `applyBackground`, `ImageFiles.dir`, settings rows | Cached folders and a revision-keyed existence cache |
+| Panel/menu snapshot drawn in software and blurred on the main thread | "Slow UI thread" frames when opening Settings | GPU `PixelCopy` (async) + blur on the worker thread |
+| 61 Settings rows built before the first frame | 54 ms in `onCreate` | First 14 rows at once (17 ms), rest built over the next frames |
+| Title crossfade re-rendered blurred text shadows every frame | — (design review) | Hardware layer during the fade (`withLayer`) |
+| Two full-screen tint layers plus a hidden base layer | — (overdraw review) | One combined tint layer; base skipped when an opaque image covers it |
+| Pill cut off at SETTINGS | Pill offset added twice → drawn 6 dp past its own bounds | Pill uses tab bounds directly, clamped, ends always round |
+
+Scripted results, v1.1.0 → v1.2.0: frames rendered for the same input dropped (carousel 216 → 82, Settings open/close
+280 → 59) because nothing redraws when idle. Top tabs median / 99th percentile 21/32 ms → 19/23 ms. Remaining jank is
+mostly opening the Settings window itself. **Confirm smoothness on the TV.**
+
 ## Project layout
 
 ```
-app/src/main/java/com/zguy/tvlauncher/
+app/src/main/java/io/github/gabrielastilla/quiethome/
   LauncherApp.kt              process start: app list, package receiver, background image cache
   AppRepository.kt            app list, card artwork (custom / banner / generated), blurred backdrops, details, launch
   Prefs.kt                    every setting, option lists, defaults, resets, pinned order
@@ -309,73 +331,98 @@ After install, **Quiet Home** appears in the Google TV **Apps** list. It works f
 
 ## Making it the Home screen
 
-Declaring a Home intent (this app does) **does not** by itself replace the Google TV launcher.
-Google TV firmware normally keeps its own launcher and does not show a Home app chooser.
-Check what your TV supports, least invasive first. Settings → **Home button** in Quiet Home tells you the current state.
+**What actually happens on Google TV.** Measured on the Google TV image (Android 14):
+- Quiet Home declares itself as a Home app, and Android lets it hold the "default Home app" role.
+- Google TV's own launcher (`com.google.android.apps.tv.launcherx`) declares a **higher-priority Home entry**.
+- While that launcher is enabled, the system's Home lookup keeps choosing it, even when Quiet Home holds the
+  role. So the Home button opens Google TV whatever the "default" setting says.
 
-### Option A — Use it as an app (no changes to the TV)
-Open it from Apps, or put it first in your Google TV favourites row. Nothing to undo.
+This is standard Google TV behaviour, not a TCL-specific restriction, and no app setting can override it.
+Settings › System › **Home button** shows the measured state:
+- *Opens Quiet Home*
+- *Default, but Google TV overrides*
+- *Opens Google TV*
 
-### Option B — The system Home chooser (only if your firmware has one)
-Some builds have **Settings → Apps → Default apps → Home app**. If you see it, pick Quiet Home.
-Undo: pick *Google TV Home* there again. Most TCL Google TV builds do **not** have this.
+Below that, a details line lists what Android resolves, who holds the role, and whether Google TV's launcher is enabled.
 
-### Option C — Remap the Home button (no system changes)
-A key-remapping app such as **Button Mapper** can use an Accessibility Service to make the Home button open Quiet Home.
-It needs the Accessibility permission, which lets that app see button presses.
-Undo: turn the mapping off, or uninstall the remapping app.
+Pick one of the options below, least invasive first. **Quiet Home never changes or disables the Google TV
+launcher by itself.**
 
-### Option D — Set the preferred Home activity with ADB
-```sh
-adb shell cmd package set-home-activity com.zguy.tvlauncher/.HomeActivity
-```
-This is accepted on many builds but Google TV may still open its own launcher.
-If Home still opens Google TV, the TV is ignoring it.
-To undo, **first record the stock Home activity** (run this before Option D):
-```sh
-adb shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME
-# last line looks like  com.google.android.apps.tv.launcherx/<activity>
-```
-then set it back with `adb shell cmd package set-home-activity <that line>`.
-Uninstalling Quiet Home also clears the preference.
+### Option A — Use it as an app (no changes)
+Open Quiet Home from the Apps row. Nothing to undo.
 
-### Option E — Disable the Google TV launcher with ADB (advanced)
-**Read first:**
-- This disables the stock home screen. You lose Google TV's home features (profiles, recommendations, the Google TV "For you" pages, and some TCL shortcuts that live there).
-- Install Quiet Home and open it once **before** doing this. If no Home app works, the TV shows a blank screen on Home. You can still fix it over ADB.
-- A system update may re-enable the stock launcher.
-- Nothing is deleted. `disable-user` is fully reversible and needs no root.
+### Option B — Remap the Home button (no system changes)
+A key-remapping app such as **Button Mapper** uses an Accessibility Service to send Home to Quiet Home. It needs the
+Accessibility permission, which lets it see button presses. Undo: turn the mapping off, or uninstall the app.
 
-```sh
-adb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx
-adb shell pm disable-user --user 0 com.google.android.tungsten.setupwraith   # fallback launcher that would appear instead
-```
-Press Home. The TV may ask which app to use; pick Quiet Home → *Always*.
+### Option C — Disable the Google TV launcher with ADB (most complete; reversible)
+Tested on the emulator with Google TV's launcher disabled:
+- the Home button opens Quiet Home
+- a cold boot starts Quiet Home
+- waking from standby returns to whatever was on screen, which is normal Android behaviour
+
+1. Install the **renamed** Quiet Home and open it once.
+2. Make it the Home role holder (harmless on its own):
+   ```sh
+   adb shell cmd role add-role-holder --user 0 android.app.role.HOME io.github.gabrielastilla.quiethome
+   ```
+3. Disable Google TV's launcher. Nothing is deleted; it only stops it running:
+   ```sh
+   adb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx
+   ```
+4. Press Home. Settings › Home button should now say **Opens Quiet Home**.
+
+Side effects: you lose Google TV's home features (For you, profiles, recommendations, and any TCL shortcuts that live
+there). A system update may re-enable the launcher; if Home opens Google TV again, repeat step 3.
+
+**Power-on behaviour is separate.** If the TV starts on an HDMI input or Live TV after power-on, that's the TV's own
+start-up input setting in its System settings, not the Home app.
 
 ### Restore the original Google TV home screen
 ```sh
-adb connect 192.168.1.50:5555
+adb connect <TV-IP>:5555
 adb shell pm enable com.google.android.apps.tv.launcherx
-adb shell pm enable com.google.android.tungsten.setupwraith
-adb shell cmd package set-home-activity <stock Home activity you recorded>   # only if you used Option D
+adb shell cmd role add-role-holder --user 0 android.app.role.HOME com.google.android.apps.tv.launcherx
 adb reboot
 ```
-Always restore **before** uninstalling Quiet Home if you used Option E.
-Last resort: a factory reset (Settings → System → About → Reset) restores everything.
+Restore **before** uninstalling Quiet Home if you used Option C, or the TV has no Home app. If that happens anyway, the
+same `pm enable` command over ADB fixes it. Last resort: a factory reset.
 
-To check which package names your TV uses (they can differ by firmware):
-```sh
-adb shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME
-adb shell pm list packages | grep -i -E "launcher|tungsten|tcl"
-```
-If they differ from the names above, send me your exact TV model and Android TV OS version
-(Settings → System → About) and I'll adjust the steps.
+## Moving to the renamed app (package ID change)
+
+The app's package ID changed from the previous ID (used by v1.1.0) to **`io.github.gabrielastilla.quiethome`**. Android treats
+that as a **different app**:
+- It installs next to the old one instead of updating it.
+- It **cannot read the old app's pins or settings**.
+- The old app's own updater refuses it (a different package).
+
+Ways to move your setup:
+
+1. **Import from the previous install (on the TV, no computer):**
+   - The old app must first get a one-time **bridge update**: v1.1.1, same old package, same key. It adds the handover feature.
+   - Then, in the renamed app: Settings › Backup & move › **Import settings** › **From previous Quiet Home**.
+   - This copies pins and their order, all settings, wallpaper, per-app backgrounds, custom artwork and fonts.
+   - The bridge isn't published yet (see RELEASING.md › Migration).
+2. **Backup file:**
+   - In any version that has *Backup & move*, choose **Export settings**. It's saved to the app's folder and to `Download/QuietHome/`.
+   - In the other install, choose **Import settings** › *From backup folder*.
+   - To move between installs with a computer:
+     `adb pull …/files/backup/quiethome-backup.zip`, then `adb push` it into the other app's `…/files/backup/` folder.
+3. **Start fresh:** pin your apps again in All Apps.
+
+**Videos aren't included** in backups (they can be large). Copy them to the new app's folder again:
+`/sdcard/Android/data/io.github.gabrielastilla.quiethome/files/wallpapers/`.
+
+After moving:
+1. Set the **renamed** app as Home: Option B or C above, using the new ID.
+2. Uninstall the old one: `adb uninstall <old package>`, or Settings › Apps.
+3. If you used Option C, check Settings › Home button says *Opens Quiet Home* before uninstalling the old app.
 
 ## Getting images onto the TV
 
 Images for wallpapers, per-app backgrounds and artwork can come from:
 - **From import folder** (works on every TV, no permission). From your Mac:
-  `adb push photo.jpg /sdcard/Android/data/com.zguy.tvlauncher/files/wallpapers/`
+  `adb push photo.jpg /sdcard/Android/data/io.github.gabrielastilla.quiethome/files/wallpapers/`
   Supports .jpg, .jpeg, .png and .webp. Then choose **From import folder** in the picker.
 - **From Pictures on this TV**: lists images in the TV's media library and asks for photo permission once.
   Images only appear there if an app (a file manager, *Send files to TV*, or a USB drive) has put them in a

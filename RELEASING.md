@@ -143,3 +143,46 @@ For a test build, use `gh release create … --prerelease`: the updater and the 
 Rate limiting (60 unauthenticated API requests per hour per IP), a missing or private repository (404), server
 errors, no network, timeouts and TLS errors each get a plain-language message. Partial downloads are deleted
 on failure or cancel, and leftover APKs are removed at the next start.
+
+## 11. Migration: renamed package (v1.2.0) and the bridge release
+
+v1.2.0 changes the application ID to **`io.github.gabrielastilla.quiethome`**. v1.1.0, the only published release,
+used the previous ID. Consequences:
+
+| | v1.1.0 installs (previous ID) | v1.2.0+ (new ID) |
+|---|---|---|
+| In-app updater | Finds the v1.2.0 release, then **rejects** it: "a different app". Nothing breaks, it just never updates. | Normal updates from v1.2.0 on |
+| Downloader code (stable link) | — | The `latest/download/QuietHome.apk` link serves v1.2.0, which installs **next to** v1.1.0 |
+| Data | Stays in the old app | Needs Import (below) |
+
+**Bridge release (optional, recommended once):** an update of the *old* package that adds the handover provider, so
+the renamed app can import pins and settings directly on the TV.
+- Built from the current source with an override; the old ID appears only in this command, not in the source:
+  ```sh
+  ./gradlew releaseAssets -PquietHome.applicationId=<previous application ID> \
+      -PquietHome.versionCode=3 -PquietHome.versionName=1.1.1-bridge
+  mv app/build/release/QuietHome.apk  app/build/release/QuietHome-bridge.apk   # NOT QuietHome.apk
+  ```
+- Signed with the same release key, so it installs over v1.1.0 in place. Tested on the emulator:
+  v1.1.0 → bridge, then the renamed app imported its data with *Import settings › From previous Quiet Home*.
+- Publish it as an **older-dated or separate** release asset named `QuietHome-bridge.apk`, never as `QuietHome.apk`,
+  so the stable link keeps serving the renamed app. Install it with Downloader using that asset's own URL:
+  `https://github.com/GabrielAstilla/quiet-home/releases/download/v1.1.1-bridge/QuietHome-bridge.apk`
+  (placeholder until published).
+
+**Order when publishing (do these together):**
+1. Release `v1.2.0` with `QuietHome.apk` and `QuietHome.json` (new package). It becomes "latest".
+2. Optionally release `v1.1.1-bridge` with `QuietHome-bridge.apk` only. Mark it as a **pre-release** so neither the
+   stable link nor the new app's updater ever picks it. Users install it once via its direct link.
+3. Update the README install steps if the Downloader code is registered (it keeps pointing at the stable link).
+
+## 12. Renaming the GitHub repository (not done)
+
+The repository name `quiet-home` already uses the app's neutral name, so the rebranding needs no repository rename. If you rename it later
+(e.g. to `owner/new-name`):
+- **Change together, in one release:** `quietHome.updateRepo` in `gradle.properties`, every
+  `github.com/GabrielAstilla/quiet-home` link in README.md and RELEASING.md, and the release notes template.
+- GitHub redirects the old repository URL, including API and `releases/latest/download/...` requests, as long as no
+  new repository is created under the old name. Installed apps and an existing Downloader code would keep working
+  through that redirect. Not verified here, because no rename was made; test it with the `curl -sIL` check in §6 after renaming.
+- Never create a new repository with the old name after renaming: that breaks the redirect for every installed copy.

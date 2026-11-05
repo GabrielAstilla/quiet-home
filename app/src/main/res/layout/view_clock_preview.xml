@@ -6,7 +6,7 @@
     android:paddingTop="4dp"
     android:paddingBottom="8dp">
 
-    <com.zguy.tvlauncher.GlassView
+    <io.github.gabrielastilla.quiethome.GlassView
         android:id="@+id/preview_glass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,5 +37,5 @@
                 android:textColor="#CCFFFFFF"
                 android:textSize="17sp" />
         </LinearLayout>
-    </com.zguy.tvlauncher.GlassView>
+    </io.github.gabrielastilla.quiethome.GlassView>
 </FrameLayout>

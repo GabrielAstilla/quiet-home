@@ -21,16 +21,17 @@ val apkAssetName = "QuietHome.apk"
 val metadataAssetName = "QuietHome.json"
 
 android {
-    namespace = "com.zguy.tvlauncher"
+    namespace = "io.github.gabrielastilla.quiethome"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.zguy.tvlauncher"
+        // Override only to build a one-off "bridge" update for an older install (see RELEASING.md › Migration).
+        applicationId = prop("quietHome.applicationId") ?: "io.github.gabrielastilla.quiethome"
         minSdk = 26
         targetSdk = 35
         // versionCode must increase for every release; the updater compares it numerically.
-        versionCode = prop("quietHome.versionCode")?.toInt() ?: 2   // override only for test builds
-        versionName = prop("quietHome.versionName") ?: "1.1.0"
+        versionCode = prop("quietHome.versionCode")?.toInt() ?: 4   // 3 is reserved for the old-package bridge build
+        versionName = prop("quietHome.versionName") ?: "1.2.0"
         prop("quietHome.appIdSuffix")?.let { applicationIdSuffix = it } // test builds only
         buildConfigField("String", "UPDATE_REPO", "\"$updateRepo\"")
         buildConfigField("String", "UPDATE_APK_ASSET", "\"$apkAssetName\"")

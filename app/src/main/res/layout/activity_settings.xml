@@ -13,7 +13,7 @@
         android:alpha="0"
         android:background="#000000" />
 
-    <com.zguy.tvlauncher.GlassView
+    <io.github.gabrielastilla.quiethome.GlassView
         android:id="@+id/panel"
         android:layout_width="440dp"
         android:layout_height="match_parent"
@@ -74,5 +74,5 @@
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
     </LinearLayout>
-    </com.zguy.tvlauncher.GlassView>
+    </io.github.gabrielastilla.quiethome.GlassView>
 </FrameLayout>

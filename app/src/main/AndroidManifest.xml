@@ -30,6 +30,12 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
+        <!-- Home apps (e.g. Google TV's launcher). Without this, Android 11+ hides them from this app, so its
+             own Home lookup always "found" itself and the Home-button status was wrong. -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.HOME" />
+        </intent>
     </queries>
 
     <application
@@ -115,6 +121,12 @@
             android:name=".UpdatesActivity"
             android:configChanges="keyboard|keyboardHidden|navigation"
             android:exported="false" />
+
+        <!-- Hands a backup to another Quiet Home install signed with the same key (checked in code). -->
+        <provider
+            android:name=".BackupProvider"
+            android:authorities="${applicationId}.backup"
+            android:exported="true" />
 
         <receiver
             android:name=".InstallResultReceiver"

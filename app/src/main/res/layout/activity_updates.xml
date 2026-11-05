@@ -6,12 +6,12 @@
     android:layout_height="match_parent"
     android:clipChildren="false">
 
-    <com.zguy.tvlauncher.BackdropView
+    <io.github.gabrielastilla.quiethome.BackdropView
         android:id="@+id/backdrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.zguy.tvlauncher.GlassView
+    <io.github.gabrielastilla.quiethome.GlassView
         android:id="@+id/panel"
         android:layout_width="760dp"
         android:layout_height="wrap_content"
@@ -175,5 +175,5 @@
                 android:textSize="13sp" />
         </LinearLayout>
         </ScrollView>
-    </com.zguy.tvlauncher.GlassView>
+    </io.github.gabrielastilla.quiethome.GlassView>
 </FrameLayout>

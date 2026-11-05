@@ -5,7 +5,7 @@
     android:background="#000000"
     android:clipChildren="false">
 
-    <com.zguy.tvlauncher.BackdropView
+    <io.github.gabrielastilla.quiethome.BackdropView
         android:id="@+id/ss_backdrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

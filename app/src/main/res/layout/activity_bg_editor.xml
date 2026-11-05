@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.zguy.tvlauncher.BackdropView
+    <io.github.gabrielastilla.quiethome.BackdropView
         android:id="@+id/backdrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -60,7 +60,7 @@
             android:orientation="horizontal" />
     </LinearLayout>
 
-    <com.zguy.tvlauncher.GlassView
+    <io.github.gabrielastilla.quiethome.GlassView
         android:id="@+id/controls_glass"
         android:layout_width="360dp"
         android:layout_height="wrap_content"
@@ -75,5 +75,5 @@
             android:clipToPadding="false"
             android:orientation="vertical"
             android:padding="16dp" />
-    </com.zguy.tvlauncher.GlassView>
+    </io.github.gabrielastilla.quiethome.GlassView>
 </FrameLayout>
