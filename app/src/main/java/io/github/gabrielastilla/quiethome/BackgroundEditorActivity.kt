@@ -129,7 +129,7 @@ class BackgroundEditorActivity : Activity() {
             // App artwork would otherwise cover the new wallpaper on Home.
             if (prefs.perAppMode == Prefs.PER_APP_CUSTOM_AND_ART) {
                 prefs.perAppMode = Prefs.PER_APP_CUSTOM
-                note = "Wallpaper saved. App-artwork backgrounds turned off (Settings › Change with selected app)."
+                note = "Wallpaper saved. App-artwork backgrounds turned off (Settings › Wallpaper & Screensaver › Change with selected app)."
             }
         } else {
             prefs.setAppBgPosition(k, position)

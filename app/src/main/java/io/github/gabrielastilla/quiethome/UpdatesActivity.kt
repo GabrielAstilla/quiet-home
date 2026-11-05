@@ -12,7 +12,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 
 /**
- * Settings › About › Updates. Every control is a focusable button; Left/Right moves between buttons,
+ * Settings › About & Updates › Updates. Every control is a focusable button; Left/Right moves between buttons,
  * Up/Down reaches the release notes (which scroll) and the automatic-check toggle.
  */
 class UpdatesActivity : Activity() {

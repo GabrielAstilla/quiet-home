@@ -20,9 +20,29 @@ No ads, no recommendations, no content feeds, no account, no network access.
  (OK) OPEN   (HOLD OK) OPTIONS   (↑) MENU
 ```
 
+## Settings
+
+Settings opens as a centred grid of eight glass section cards over the dimmed Home screen:
+
+| Card | Contains |
+|---|---|
+| Appearance | Accent colour, glass blur / opacity / tint, **Typography ›** (font, Apple-style fonts, text size) |
+| App Cards & Layout | Card size, spacing, corner radius, app names, TV banners, screen margins, description, remote hints, remove custom artwork |
+| Wallpaper & Screensaver | Browse wallpapers, type and its colours/image/video/position, change with selected app, **Wallpaper Look ›** (brightness, dimming, blur, overlay, resets), **Screensaver ›** |
+| Clock & Greeting | Live preview, display name, clock, format, greeting, name in greeting, glass backing, network status |
+| Motion & Performance | Animations (Full / Reduced / Off), animation speed, visual effects |
+| Apps | Pin or unpin (All Apps), how to reorder, reset pinned apps, All Apps columns, non-TV apps |
+| Launcher Setup | Home button status, Android TV settings, export / import settings, reset everything |
+| About & Updates | Updates, version, installation (Downloader link, app ID), credits |
+
+Remote: ← → ↑ ↓ moves between cards, OK opens a section, BACK returns one level (sub-page › section › grid ›
+Home) and puts focus back on the card or row you came from. Inside a section ↑ ↓ choose, ← → change, OK selects.
+Only settings that apply are shown (for example the gradient colours only when the wallpaper type is Gradient).
+A section that is taller than the screen scrolls inside its panel; the guide stays in its own bottom area.
+
 ## Updates and Downloader install
 
-Settings › About › **Updates** shows the installed version, then *Check for Updates*, *Download Update* (with progress
+Settings › About & Updates › **Updates** shows the installed version, then *Check for Updates*, *Download Update* (with progress
 and Cancel/Retry) and *Install Update* (Android's own installer asks you to confirm). An optional daily check is off by
 default and only notifies. Updates come from the stable releases of the public repository
 [GabrielAstilla/quiet-home](https://github.com/GabrielAstilla/quiet-home). See
@@ -40,7 +60,7 @@ when you leave the navigation. Page changes use a 260 ms fade with a 3 % slide i
 where they are (verified: after a burst of 8 presses the pill had settled on the right tab within 250 ms).
 
 **Typography note:** the app uses **TeX Gyre Heros**, a free Helvetica-style font, because real Helvetica can't be bundled
-without a licence. If you have licensed Helvetica files, import them under Settings › Typography and they're used instead.
+without a licence. If you have licensed Helvetica files, import them under Settings › Appearance › Typography and they're used instead.
 
 ## Layout and card sizes
 
@@ -114,15 +134,15 @@ The greeting sits directly below the clock and uses the TV's local time:
 
 It re-checks every minute while Home is visible (system time tick, no polling), on time or time-zone changes,
 and when you come back to Home. Changes crossfade, or switch instantly with motion off.
-Settings › Appearance › Clock & Greeting has a live preview, plus **Display name** (edited with the TV keyboard; blank means no name and no comma),
+Settings › Clock & Greeting has a live preview, plus **Display name** (edited with the TV keyboard; blank means no name and no comma),
 Show clock, Show greeting, Name in greeting, Clock format (12 h, 12 h with AM/PM, 24 h) and an optional **Glass backing**.
 
 ## Wallpapers
 
-Settings › Appearance › Wallpaper:
+Settings › Wallpaper & Screensaver:
 - **Browse wallpapers…** opens a thumbnail gallery:
   - **Nature** and **Abstract**: 11 photos from Unsplash under the Unsplash License, bundled at 1920×1080 so they work
-    offline. Photographer credits are under Settings › Wallpaper › *Wallpaper credits* and in [CREDITS.md](CREDITS.md).
+    offline. Photographer credits are under Settings › About & Updates › *Credits* and in [CREDITS.md](CREDITS.md).
   - **Quiet Home Originals**: Apple-*inspired* aerial (Coastline, Lagoon, Dunes, Canyon), ocean (Deep Sea), nature
     (Alpine Dusk, Forest Mist, Aurora) and abstract (Bloom, Silk) wallpapers. These are **drawn by this app's code**.
     They are not Apple images, and no Apple assets are bundled.
@@ -153,7 +173,7 @@ Use a still frame as wallpaper**.
   *Animated (off = still frame)* and *Lightweight effects* both show the still frame instead.
 - A missing or broken video falls back to its still frame, or to the colour or gradient if there is no still.
 
-**Screensaver** (Settings › Screensaver): *Start after* (Off, 1–30 min), *Show* (current wallpaper with a very slow drift, or the
+**Screensaver** (Settings › Wallpaper & Screensaver › Screensaver): *Start after* (Off, 1–30 min), *Show* (current wallpaper with a very slow drift, or the
 screensaver video), clock and greeting overlay, and *Preview screensaver*. It fades in. **Any remote key dismisses it,
 and that key is swallowed**, so the card selected behind it never launches by accident. Volume keys still work.
 
@@ -220,7 +240,7 @@ icon and name). Any card can use your own image (cropped to 16:9).
 | Carousel scroll | 260 ms decelerate, keeps selection ~1 card from the left, 1.5 from the right | yes — new press retargets |
 | Title / details | fade-out 90 ms → swap → fade-in 180 ms with 6 dp rise | yes — latest selection wins |
 | Background | crossfade 320 ms, starts ~60 ms after the title swaps | yes — stale loads are dropped |
-| Settings panel | floating glass, 56 dp slide + fade, 320 ms in / 240 ms out, 38 % dim | — |
+| Settings | card grid fades/scales in (320 ms, 62 % dim); focused card: accent border + 4 % scale + 6 dp lift (180 ms); section panel scales 0.96→1 + fade (260 ms); sub-pages slide 28 dp + fade (220 ms) | yes — each animates from its current state |
 | App options menu | scale 0.92→1 + fade + 8 dp drift from the card, 260 ms in / 180 ms out, 22 % dim | — |
 | Reorder | card lifts, neighbours move 220 ms, "Position saved" chip | — |
 
@@ -272,7 +292,7 @@ app/src/main/java/io/github/gabrielastilla/quiethome/
   Prefs.kt                    every setting, option lists, defaults, resets, pinned order
   HomeActivity.kt             hero, carousel, per-app backgrounds, move mode, live restyle
   AllAppsActivity.kt          alphabetical grid
-  SettingsActivity.kt         slide-in settings panel
+  SettingsActivity.kt         settings card grid, sections and sub-pages
   BackgroundEditorActivity.kt preview-before-save for wallpaper / per-app backgrounds
   PickImageActivity.kt        remote-friendly image picker (Pictures, import folder, file browser)
   BackdropView.kt             layered, crossfading background; publishes the blurred copy used by glass
@@ -338,7 +358,7 @@ After install, **Quiet Home** appears in the Google TV **Apps** list. It works f
   role. So the Home button opens Google TV whatever the "default" setting says.
 
 This is standard Google TV behaviour, not a TCL-specific restriction, and no app setting can override it.
-Settings › System › **Home button** shows the measured state:
+Settings › Launcher Setup › **Home button** shows the measured state:
 - *Opens Quiet Home*
 - *Default, but Google TV overrides*
 - *Opens Google TV*
@@ -370,7 +390,7 @@ Tested on the emulator with Google TV's launcher disabled:
    ```sh
    adb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx
    ```
-4. Press Home. Settings › Home button should now say **Opens Quiet Home**.
+4. Press Home. Settings › Launcher Setup › Home button should now say **Opens Quiet Home**.
 
 Side effects: you lose Google TV's home features (For you, profiles, recommendations, and any TCL shortcuts that live
 there). A system update may re-enable the launcher; if Home opens Google TV again, repeat step 3.
@@ -400,7 +420,7 @@ Ways to move your setup:
 
 1. **Import from the previous install (on the TV, no computer):**
    - The old app must first get a one-time **bridge update**: v1.1.1, same old package, same key. It adds the handover feature.
-   - Then, in the renamed app: Settings › Backup & move › **Import settings** › **From previous Quiet Home**.
+   - Then, in the renamed app: Settings › Launcher Setup › **Import settings** › **From previous Quiet Home**.
    - This copies pins and their order, all settings, wallpaper, per-app backgrounds, custom artwork and fonts.
    - The bridge isn't published yet (see RELEASING.md › Migration).
 2. **Backup file:**
@@ -416,7 +436,7 @@ Ways to move your setup:
 After moving:
 1. Set the **renamed** app as Home: Option B or C above, using the new ID.
 2. Uninstall the old one: `adb uninstall <old package>`, or Settings › Apps.
-3. If you used Option C, check Settings › Home button says *Opens Quiet Home* before uninstalling the old app.
+3. If you used Option C, check Settings › Launcher Setup › Home button says *Opens Quiet Home* before uninstalling the old app.
 
 ## Getting images onto the TV
 

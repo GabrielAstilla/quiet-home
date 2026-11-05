@@ -192,10 +192,12 @@ class HomeActivity : Activity(), AppAdapter.Listener {
         // Optional daily update check (off by default). It only notifies; nothing downloads by itself.
         main.postDelayed({
             app.updater.maybeAutoCheck { v ->
-                if (isForeground) GlassMenu.chip(this, root, "Update available: Quiet Home $v · Settings › About › Updates")
+                if (isForeground) GlassMenu.chip(this, root, "Update available: Quiet Home $v · Settings › About & Updates › Updates")
             }
         }, 4000)
         topBar.onResume()
+        // The guide is hidden while Settings (a translucent overlay with its own guide) is on top.
+        hints.animate().alpha(1f).setDuration(Motion.of(prefs).d(180)).start()
         if (appliedRevision != prefs.revision) applyStyle()
         if (app.repo.loaded) {
             renderPinned()
@@ -208,6 +210,7 @@ class HomeActivity : Activity(), AppAdapter.Listener {
         isForeground = false
         idle.stop()
         topBar.onPause()
+        hints.animate().alpha(0f).setDuration(Motion.of(prefs).d(150)).start()
         focusOnTabs = topBar.contains(currentFocus)
         lastTab = if (focusOnTabs) currentFocus else null
         if (movePos >= 0) endMove()

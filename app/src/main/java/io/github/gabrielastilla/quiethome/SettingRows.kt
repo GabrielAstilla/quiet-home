@@ -117,11 +117,12 @@ class RowList(private val activity: Activity, private val container: LinearLayou
             this.text = text.uppercase()
             textSize = 13f
             letterSpacing = 0.1f
+            gravity = android.view.Gravity.CENTER
             setTextColor(0x99FFFFFF.toInt())
-            setPadding(Ui.dp(context, 6), Ui.dp(context, 18), 0, Ui.dp(context, 6))
+            setPadding(0, Ui.dp(context, 14), 0, Ui.dp(context, 6))
         }
         headers += tv to visibleWhen
-        container.addView(tv)
+        container.addView(tv, LinearLayout.LayoutParams(-1, -2))
         tv.visibility = if (visibleWhen()) View.VISIBLE else View.GONE
         Fonts.apply(tv)
     }

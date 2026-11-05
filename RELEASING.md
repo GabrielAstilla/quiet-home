@@ -29,7 +29,7 @@ Downloader code  → https://github.com/GabrielAstilla/quiet-home/releases/lates
 quietHome.updateRepo=GabrielAstilla/quiet-home
 ```
 It is compiled into `BuildConfig.UPDATE_REPO`. Builds with it empty show "Updates aren't set up for this build yet"
-in Settings › About › Updates, and make no network requests.
+in Settings › About & Updates › Updates, and make no network requests.
 
 ## 3. Versioning
 
@@ -115,7 +115,7 @@ For a test build, use `gh release create … --prerelease`: the updater and the 
 
 ## 9. Later updates
 
-- **In the app:** Settings › About › Updates › **Check for Updates** › **Download Update** › **Install Update** ›
+- **In the app:** Settings › About & Updates › Updates › **Check for Updates** › **Download Update** › **Install Update** ›
   confirm on Android's installer. The first time, Android asks you to allow Quiet Home to install apps; the
   Updates screen opens that setting for you. Pinned apps, wallpapers and settings are kept, because the package
   name and signing key are the same.

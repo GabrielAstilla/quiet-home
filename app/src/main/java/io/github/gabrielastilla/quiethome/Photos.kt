@@ -7,7 +7,7 @@ package io.github.gabrielastilla.quiethome
  * The licence allows copying, modifying and distributing photos, including commercially, without
  * permission or attribution. It does not allow selling unaltered copies or compiling photos to build
  * a similar or competing service; a small set of backgrounds inside a launcher is neither. Credits
- * are shown anyway (Settings › Wallpaper › Wallpaper credits, and CREDITS.md).
+ * are shown anyway (Settings › About & Updates › Credits, and CREDITS.md).
  */
 object Photos {
 
